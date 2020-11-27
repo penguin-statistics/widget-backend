@@ -2,7 +2,7 @@
      alt="Penguin Statistics - Logo"
      width="96px" />
 
-# Penguin Statistics - Widgets `backend`
+# Penguin Statistics - Widget `backend`
 ![Status](https://img.shields.io/badge/status-development-red)
 [![Go](https://img.shields.io/github/go-mod/go-version/penguin-statistics/embed-backend)](https://github.com/penguin-statistics/embed-backend/blob/main/go.mod)
 [![License](https://img.shields.io/github/license/penguin-statistics/embed-backend)](https://github.com/penguin-statistics/embed-backend/blob/main/LICENSE)

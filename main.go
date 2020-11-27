@@ -5,9 +5,11 @@ import (
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	"github.com/penguin-statistics/partial-matrix/config"
-	"github.com/penguin-statistics/partial-matrix/controllers"
+	"github.com/penguin-statistics/partial-matrix/controller"
+	"github.com/penguin-statistics/partial-matrix/dependency"
 	"github.com/penguin-statistics/partial-matrix/utils"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -21,19 +23,19 @@ func main() {
 	// echo
 	e := echo.New()
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins:     []string{
+		AllowOrigins: []string{
 			"*",
 		},
-		AllowMethods:     []string{
+		AllowMethods: []string{
 			http.MethodGet,
 			http.MethodHead,
 			http.MethodOptions,
 		},
-		AllowHeaders:     []string{
+		AllowHeaders: []string{
 			"Penguin-Source",
 		},
 		AllowCredentials: true,
-		ExposeHeaders:    []string{
+		ExposeHeaders: []string{
 			"Last-Modified",
 			"Penguin-Record-Size",
 
@@ -41,18 +43,19 @@ func main() {
 			"RateLimit-Remaining",
 			"RateLimit-Reset",
 		},
-		MaxAge:           int((time.Hour * 24 * 365).Seconds()),
+		MaxAge: int((time.Hour * 24 * 365).Seconds()),
 	}))
 
 	l.Debugln("`echo` has been initialized")
 
 	l.Debugln("initializing controllers")
 
-	matrix := controllers.NewMatrixController()
+	controllers := controller.NewCollection()
+	manager := dependency.New(controllers)
 
-	access := e.Group("/server/:server", func(handlerFunc echo.HandlerFunc) echo.HandlerFunc {
+	matrixGroup := e.Group("/matrix/:server", func(handlerFunc echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			server := c.Param("server")
+			server := strings.ToUpper(c.Param("server"))
 			if !config.ValidServer(server) {
 				return echo.NewHTTPError(http.StatusBadRequest, errors.New("malformed parameter `server` provided"))
 			}
@@ -63,18 +66,34 @@ func main() {
 		}
 	})
 
-	access.GET("/stage/:stageId", func(c echo.Context) error {
+	matrixGroup.GET("/stage/:stageId", func(c echo.Context) error {
 		server := c.Get("server").(string)
-		data, err := matrix.Stage(server, c.Param("stageId"))
+		data, err := controllers.Matrix.Stage(server, c.Param("stageId"))
 		if err != nil {
 			return err
 		}
-		return c.JSON(http.StatusOK, data)
+		resp, err := manager.Populate(data)
+		if err != nil {
+			return err
+		}
+		return c.JSON(http.StatusOK, resp)
 	})
 
-	access.GET("/item/:itemId", func(c echo.Context) error {
+	matrixGroup.GET("/item/:itemId", func(c echo.Context) error {
 		server := c.Get("server").(string)
-		data, err := matrix.Item(server, c.Param("itemId"))
+		data, err := controllers.Matrix.Item(server, c.Param("itemId"))
+		if err != nil {
+			return err
+		}
+		resp, err := manager.Populate(data)
+		if err != nil {
+			return err
+		}
+		return c.JSON(http.StatusOK, resp)
+	})
+
+	e.GET("/item/:itemId", func(c echo.Context) error {
+		data, err := controllers.Item.Item(c.Param("itemId"))
 		if err != nil {
 			return err
 		}
