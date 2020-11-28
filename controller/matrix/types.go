@@ -15,8 +15,8 @@ type Controller struct {
 type Matrix struct {
 	StageID  string `json:"stageId,omitempty"`
 	ItemID   string `json:"itemId,omitempty"`
-	Quantity int    `json:"quantity,omitempty"`
-	Times    int    `json:"times,omitempty"`
+	Quantity int    `json:"quantity"` // cannot omitempty as it is zeroable
+	Times    int    `json:"times"`    // cannot omitempty as it is zeroable
 	Start    *int   `json:"start,omitempty"`
 	End      *int   `json:"end,omitempty"`
 }
