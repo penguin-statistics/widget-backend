@@ -91,7 +91,7 @@ func (m *Assembler) Response(response *MatrixResponse) []byte {
 	return buf.Bytes()
 }
 
-func (m Assembler) Error(error *errors.Error) (int, []byte) {
+func (m *Assembler) Error(error *errors.Error) (int, []byte) {
 	buf := bytes.Buffer{}
 	err := m.tmpl.Execute(&buf, struct {
 		PenguinWidgetData *errors.WrappedError
