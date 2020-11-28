@@ -13,8 +13,10 @@ const AcceptableFailCount = 10
 // DefaultTimeout describes the default timeout for the underlying http.Client that the updater uses
 const DefaultTimeout = time.Second * 20
 
+// Updater describes a func type which will be used to call and get data update from
 type Updater func(instance *Cache) (interface{}, error)
 
+// CacheConfig describes the configuration to provide when initializing a cache instance
 type CacheConfig struct {
 	// Name is the name of this cache instance
 	Name string
@@ -29,6 +31,7 @@ type CacheConfig struct {
 	Updater Updater
 }
 
+// Cache is the thread-safe cache instance that automatically updates data every Interval with Updater
 type Cache struct {
 	// == data ==
 
@@ -93,6 +96,7 @@ func (c *Cache) Ready() bool {
 	return false
 }
 
+// NewCache creates a new Cache with CacheConfig provided
 func NewCache(config CacheConfig) *Cache {
 	instance := &Cache{
 		Name:     config.Name,
@@ -110,7 +114,7 @@ func NewCache(config CacheConfig) *Cache {
 	onFetchErr := func(err error) {
 		if err != nil {
 			instance.Logger.Errorln("error occurred when trying to fetch new data", err)
-			instance.FailCount += 1
+			instance.FailCount++
 		}
 	}
 

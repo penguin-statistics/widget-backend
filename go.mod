@@ -1,4 +1,4 @@
-module github.com/penguin-statistics/partial-matrix
+module github.com/penguin-statistics/widget-backend
 
 go 1.13
 
@@ -10,4 +10,6 @@ require (
 	github.com/sirupsen/logrus v1.7.0
 	github.com/valyala/fasttemplate v1.2.1 // indirect
 	golang.org/x/crypto v0.0.0-20201112155050-0c6587e931a9 // indirect
+	golang.org/x/lint v0.0.0-20200302205851-738671d3881b // indirect
+	golang.org/x/tools v0.0.0-20201125231158-b5590deeca9b // indirect
 )

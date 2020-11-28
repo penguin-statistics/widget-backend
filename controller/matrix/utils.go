@@ -1,7 +1,7 @@
 package matrix
 
 import (
-	"github.com/penguin-statistics/partial-matrix/utils"
+	"github.com/penguin-statistics/widget-backend/utils"
 	"io"
 	"net/http"
 )

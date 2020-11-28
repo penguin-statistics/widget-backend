@@ -1,15 +1,17 @@
 package matrix
 
 import (
-	"github.com/penguin-statistics/partial-matrix/utils"
+	"github.com/penguin-statistics/widget-backend/utils"
 	"github.com/sirupsen/logrus"
 )
 
+// Controller consists instance for a type of data. Matrix controller consists a slice of utils.Cache which contains data from multiple server
 type Controller struct {
 	caches []*utils.Cache
 	logger *logrus.Entry
 }
 
+// Matrix specifies data structure for the matrix data type
 type Matrix struct {
 	StageID  string `json:"stageId,omitempty"`
 	ItemID   string `json:"itemId,omitempty"`

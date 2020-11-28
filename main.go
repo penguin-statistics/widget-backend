@@ -4,10 +4,10 @@ import (
 	"errors"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
-	"github.com/penguin-statistics/partial-matrix/config"
-	"github.com/penguin-statistics/partial-matrix/controller"
-	"github.com/penguin-statistics/partial-matrix/dependency"
-	"github.com/penguin-statistics/partial-matrix/utils"
+	"github.com/penguin-statistics/widget-backend/config"
+	"github.com/penguin-statistics/widget-backend/controller/meta"
+	"github.com/penguin-statistics/widget-backend/response"
+	"github.com/penguin-statistics/widget-backend/utils"
 	"net/http"
 	"strings"
 	"time"
@@ -50,8 +50,8 @@ func main() {
 
 	l.Debugln("initializing controllers")
 
-	controllers := controller.NewCollection()
-	manager := dependency.New(controllers)
+	controllers := meta.NewCollection()
+	manager := response.New(controllers)
 
 	matrixGroup := e.Group("/matrix/:server", func(handlerFunc echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
@@ -68,11 +68,11 @@ func main() {
 
 	matrixGroup.GET("/stage/:stageId", func(c echo.Context) error {
 		server := c.Get("server").(string)
-		data, err := controllers.Matrix.Stage(server, c.Param("stageId"))
+		records, err := controllers.Matrix.Stage(server, c.Param("stageId"))
 		if err != nil {
 			return err
 		}
-		resp, err := manager.Populate(data)
+		resp, err := manager.Marshal(records, server, "stage")
 		if err != nil {
 			return err
 		}
@@ -81,11 +81,11 @@ func main() {
 
 	matrixGroup.GET("/item/:itemId", func(c echo.Context) error {
 		server := c.Get("server").(string)
-		data, err := controllers.Matrix.Item(server, c.Param("itemId"))
+		records, err := controllers.Matrix.Item(server, c.Param("itemId"))
 		if err != nil {
 			return err
 		}
-		resp, err := manager.Populate(data)
+		resp, err := manager.Marshal(records, server, "item")
 		if err != nil {
 			return err
 		}

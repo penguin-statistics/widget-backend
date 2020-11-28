@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// NewRetriedOperation executes a retry.RetryableFunc with custom default retry parameters. Returns error if all retry attempts failed
 func NewRetriedOperation(retryableFunc retry.RetryableFunc) error {
 	return retry.Do(
 		retryableFunc,
@@ -13,9 +14,9 @@ func NewRetriedOperation(retryableFunc retry.RetryableFunc) error {
 		retry.Attempts(5),
 
 		// increased delay to 2s in order to give sufficient backoff
-		retry.Delay(time.Second * 2),
+		retry.Delay(time.Second*2),
 
 		// increased random to 3s in order to give sufficient room for random
-		retry.MaxJitter(time.Second * 3),
+		retry.MaxJitter(time.Second*3),
 	)
 }
