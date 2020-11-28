@@ -27,7 +27,7 @@ func createUpdater(server string) utils.Updater {
 			panic(err)
 		}
 
-		cache.Logger.Debugln("assembled new request with url", req.URL)
+		cache.Logger.Traceln("assembled new request with url", req.URL)
 
 		var resp *http.Response
 		err = utils.NewRetriedOperation(func() (err error) {

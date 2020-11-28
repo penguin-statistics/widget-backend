@@ -18,7 +18,7 @@ func New() *Controller {
 			utils.NewCache(utils.CacheConfig{
 				Name:     "Matrix",
 				Server:   server,
-				Interval: time.Minute * 1,
+				Interval: time.Minute * 5,
 				Updater:  createUpdater(server),
 			}),
 		)
