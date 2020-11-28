@@ -3,8 +3,9 @@
      width="96px" />
 
 # Penguin Statistics - Widget `backend`
-![Status](https://img.shields.io/badge/status-development-red)
-[![Go](https://img.shields.io/github/go-mod/go-version/penguin-statistics/embed-backend)](https://github.com/penguin-statistics/embed-backend/blob/main/go.mod)
+[![Status](https://img.shields.io/badge/status-staging-orange)](#readme)
+[![Go Version](https://img.shields.io/github/go-mod/go-version/penguin-statistics/embed-backend)](https://github.com/penguin-statistics/embed-backend/blob/main/go.mod)
+[![GoDoc](https://godoc.org/github.com/penguin-statistics/widget-backend?status.svg)](https://godoc.org/github.com/penguin-statistics/widget-backend)
 [![Go Report Card](https://goreportcard.com/badge/github.com/penguin-statistics/widget-backend)](https://goreportcard.com/report/github.com/penguin-statistics/widget-backend)
 [![License](https://img.shields.io/github/license/penguin-statistics/embed-backend)](https://github.com/penguin-statistics/embed-backend/blob/main/LICENSE)
 [![Last Commit](https://img.shields.io/github/last-commit/penguin-statistics/embed-backend)](https://github.com/penguin-statistics/embed-backend/commits/main)
