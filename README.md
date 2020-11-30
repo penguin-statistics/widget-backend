@@ -3,7 +3,7 @@
      width="96px" />
 
 # Penguin Statistics - Widget `backend`
-[![Status](https://img.shields.io/badge/status-staging-orange)](#readme)
+[![Status](https://img.shields.io/badge/status-production-green)](#readme)
 [![Language](https://img.shields.io/badge/using-Go-%2300add8?logo=go)](#readme)
 [![Go Version](https://img.shields.io/github/go-mod/go-version/penguin-statistics/widget-backend)](https://github.com/penguin-statistics/widget-backend/blob/main/go.mod)
 [![GoDoc](https://godoc.org/github.com/penguin-statistics/widget-backend?status.svg)](https://godoc.org/github.com/penguin-statistics/widget-backend)
