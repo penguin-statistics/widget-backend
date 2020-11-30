@@ -38,11 +38,11 @@ func (c *Controller) Status(_ string) *status.Status {
 }
 
 // Zone returns the Zone found with specified zoneID
-func (c *Controller) Zone(zoneID string) (result *Zone, err error) {
+func (c *Controller) Zone(zoneID string) (result *Zone) {
 	for _, entry := range c.Content() {
 		if entry.ZoneID == zoneID {
-			return entry, nil
+			return entry
 		}
 	}
-	return nil, nil
+	return nil
 }

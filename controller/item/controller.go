@@ -38,11 +38,11 @@ func (c *Controller) Status(_ string) *status.Status {
 }
 
 // Item returns the Item found with specified itemID
-func (c *Controller) Item(itemID string) (result *Item, err error) {
+func (c *Controller) Item(itemID string) (result *Item) {
 	for _, entry := range c.Content() {
 		if entry.ItemID == itemID {
-			return entry, nil
+			return entry
 		}
 	}
-	return nil, nil
+	return nil
 }

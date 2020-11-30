@@ -8,17 +8,9 @@ import (
 	"github.com/penguin-statistics/widget-backend/controller/zone"
 )
 
-type MatrixQuery struct {
-	// StageID is the query stageId of the current response; empty represents stageId hasn't been used as one of the constraints
-	StageID string `json:"stageId,omitempty"`
-
-	// ItemID is the query itemId of the current response; empty represents itemId hasn't been used as one of the constraints
-	ItemID string `json:"itemId,omitempty"`
-}
-
 // MatrixResponse consists additional data from the matrix result itself
 type MatrixResponse struct {
-	Query *MatrixQuery `json:"query,omitempty"`
+	Query *matrix.Query `json:"query,omitempty"`
 
 	// CacheStatus represents statuses of underlying controllers and caches of current response
 	CacheStatus map[string]*status.Status `json:"cache,omitempty"`

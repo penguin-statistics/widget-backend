@@ -1,5 +1,6 @@
 package config
 
 const (
-	UILocation = "/root/frontend/dist/"
+	UILocation = "/home/web/widget-frontend/dist/"
+	DocLocation = "/home/web/widget-docs/dist/"
 )

@@ -3,6 +3,7 @@ package matrix
 import (
 	"github.com/penguin-statistics/widget-backend/config"
 	"github.com/penguin-statistics/widget-backend/controller/status"
+	"github.com/penguin-statistics/widget-backend/errors"
 	"github.com/penguin-statistics/widget-backend/utils"
 	"time"
 )
@@ -62,32 +63,49 @@ func (c *Controller) Status(server string) *status.Status {
 	}
 }
 
-// Stage returns the matrices found in utils.Cache for server with specified stageID
-func (c *Controller) Stage(server, stageID string) (results []*Matrix, err error) {
-	data, err := c.ServerContent(server)
-	if err != nil {
-		return nil, err
-	}
-
-	for _, entry := range data {
+func filterStages(matrix []*Matrix, stageID string) (results []*Matrix) {
+	for _, entry := range matrix {
 		if entry.StageID == stageID {
 			results = append(results, entry)
 		}
 	}
-	return results, nil
+	return results
 }
 
-// Item returns the matrices found in utils.Cache for server with specified itemId
-func (c *Controller) Item(server, itemID string) (results []*Matrix, err error) {
-	data, err := c.ServerContent(server)
-	if err != nil {
-		return nil, err
-	}
-
-	for _, entry := range data {
+func filterItems(matrix []*Matrix, itemID string) (results []*Matrix) {
+	for _, entry := range matrix {
 		if entry.ItemID == itemID {
 			results = append(results, entry)
 		}
 	}
+	return results
+}
+
+// Query queries a set of matrix response using provided Query
+func (c *Controller) Query(query *Query) (results []*Matrix, err *errors.Error) {
+	data, sErr := c.ServerContent(query.Server)
+	if sErr != nil {
+		return nil, errors.New("FetchData", "failed to fetch matrix data from cache", errors.BlameServer)
+	}
+	unfiltered := len(data)
+
+	if query.StageID != "" && query.ItemID != "" {
+		results = filterItems(filterStages(data, query.StageID), query.ItemID)
+	} else {
+		if query.StageID != "" {
+			results = filterStages(data, query.StageID)
+		} else if query.ItemID != "" {
+			results = filterStages(data, query.ItemID)
+		}
+	}
+
+	if unfiltered == len(results) {
+		return nil, errors.New("EmptyParams", "at least one of the query params shall be specified: stageId, itemId", errors.BlameUser)
+	}
+
+	if len(results) == 0 {
+		return nil, errors.New("NotFound", "no records have been found with query params provided", errors.BlameUser)
+	}
+
 	return results, nil
 }

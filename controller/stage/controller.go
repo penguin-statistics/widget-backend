@@ -38,11 +38,11 @@ func (c *Controller) Status(_ string) *status.Status {
 }
 
 // Stage returns the Stage found with specified stageID
-func (c *Controller) Stage(stageID string) (result *Stage, err error) {
+func (c *Controller) Stage(stageID string) (result *Stage) {
 	for _, entry := range c.Content() {
 		if entry.StageID == stageID {
-			return entry, nil
+			return entry
 		}
 	}
-	return nil, nil
+	return nil
 }

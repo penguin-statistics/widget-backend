@@ -20,3 +20,14 @@ type Matrix struct {
 	Start    *int   `json:"start,omitempty"`
 	End      *int   `json:"end,omitempty"`
 }
+
+type Query struct {
+	// StageID is the query stageId of the current response; empty represents stageId hasn't been used as one of the constraints
+	StageID string `json:"stageId,omitempty"`
+
+	// ItemID is the query itemId of the current response; empty represents itemId hasn't been used as one of the constraints
+	ItemID string `json:"itemId,omitempty"`
+
+	// Server is the server to query matrix of
+	Server string `json:"server,omitempty"`
+}
