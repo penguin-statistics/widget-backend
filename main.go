@@ -81,12 +81,19 @@ func main() {
 	matrixGroup.GET("/item/:itemId", matrixHandler)
 	matrixGroup.GET("/exact/:stageId/:itemId", matrixHandler)
 
+	// widget static files
 	e.Static("/_widget", path.Join(config.UILocation, "_widget"))
 
+	// docs static files
 	e.Static("/_docs", path.Join(config.DocLocation, "_docs"))
 
+	// docs page
 	e.File("/", path.Join(config.DocLocation, "index.html"))
 
+	// favicon which directs to /favicon.ico at widget frontend
+	e.File("/favicon.ico", path.Join(config.UILocation, "favicon.ico"))
+
+	// match all other routes as 404 and display custom rendered error page
 	e.GET("*", func(c echo.Context) error {
 		return c.HTMLBlob(render.Error(errors.New("PageNotFound", "unrecognized resource path", errors.BlameUser)))
 	})
