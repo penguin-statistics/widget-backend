@@ -33,7 +33,7 @@ func New() *Controller {
 }
 
 // Server gives utils.Cache of server
-func (c *Controller) Server(server string) (*utils.Cache, error) {
+func (c *Controller) Server(server string) (*utils.Cache, *errors.Error) {
 	cache, err := utils.FindServerCache(c.caches, server)
 	if err != nil {
 		return nil, err
@@ -42,7 +42,7 @@ func (c *Controller) Server(server string) (*utils.Cache, error) {
 }
 
 // ServerContent gives matrices from utils.Cache of server
-func (c *Controller) ServerContent(server string) ([]*Matrix, error) {
+func (c *Controller) ServerContent(server string) ([]*Matrix, *errors.Error) {
 	cache, err := c.Server(server)
 	if err != nil {
 		return nil, err

@@ -54,7 +54,7 @@ func main() {
 		return func(c echo.Context) error {
 			server := c.Param("server")
 			if !config.ValidServer(server) {
-				return c.HTMLBlob(render.Error(ErrInvalidServer))
+				return c.HTMLBlob(render.Error(errors.ErrInvalidServer))
 			}
 
 			c.Set("query", &matrix.Query{
