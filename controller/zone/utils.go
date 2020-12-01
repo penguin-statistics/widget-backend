@@ -4,6 +4,7 @@ import (
 	"github.com/penguin-statistics/widget-backend/utils"
 	"io"
 	"net/http"
+	"net/url"
 )
 
 var logger = utils.NewLogger("ZoneController:utils")
@@ -18,7 +19,7 @@ func unmarshalResponse(reader io.Reader) (result []*Zone, err error) {
 }
 
 func updater(cache *utils.Cache) (interface{}, error) {
-	req, err := utils.NewPenguinRequest("zones", "")
+	req, err := utils.NewPenguinRequest("zones", &url.Values{})
 	if err != nil {
 		panic(err)
 	}

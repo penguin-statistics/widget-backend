@@ -7,7 +7,7 @@ import (
 
 // Controller consists instance for a type of data
 type Controller struct {
-	cache  *utils.Cache
+	caches []*utils.Cache
 	logger *logrus.Entry
 }
 

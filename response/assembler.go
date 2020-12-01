@@ -49,7 +49,7 @@ func (m *Assembler) Marshal(records []*matrix.Matrix, query *matrix.Query) *Matr
 			stageDeps.Add(record.StageID)
 		}
 		for _, stageID := range stageDeps.Slice() {
-			stage := m.collection.Stage.Stage(stageID)
+			stage := m.collection.Stage.Stage(query.Server, stageID)
 			response.Stages = append(response.Stages, stage)
 			zoneDeps.Add(stage.ZoneID)
 		}

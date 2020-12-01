@@ -11,7 +11,7 @@ const (
 )
 
 // NewPenguinRequest creates a http.Request that parses resource as relative path against BaseEndpoint to produce path, and appends server to the URL that is being generated
-func NewPenguinRequest(resource string, server string) (*http.Request, error) {
+func NewPenguinRequest(resource string, params *url.Values) (*http.Request, error) {
 	rel, err := url.ParseRequestURI(BaseEndpoint)
 	if err != nil {
 		return nil, err
@@ -20,11 +20,7 @@ func NewPenguinRequest(resource string, server string) (*http.Request, error) {
 	if err != nil {
 		return nil, err
 	}
-	if server != "" {
-		q := rel.Query()
-		q.Set("server", server)
-		rel.RawQuery = q.Encode()
-	}
+	rel.RawQuery = params.Encode()
 
 	return http.NewRequest("GET", rel.String(), nil)
 }

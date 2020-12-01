@@ -4,6 +4,7 @@ import (
 	"github.com/penguin-statistics/widget-backend/utils"
 	"io"
 	"net/http"
+	"net/url"
 )
 
 var logger = utils.NewLogger("ItemController:utils")
@@ -18,7 +19,7 @@ func unmarshalResponse(reader io.Reader) (result []*Item, err error) {
 }
 
 func updater(cache *utils.Cache) (interface{}, error) {
-	req, err := utils.NewPenguinRequest("items", "")
+	req, err := utils.NewPenguinRequest("items", &url.Values{})
 	if err != nil {
 		panic(err)
 	}

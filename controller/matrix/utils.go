@@ -4,6 +4,7 @@ import (
 	"github.com/penguin-statistics/widget-backend/utils"
 	"io"
 	"net/http"
+	"net/url"
 )
 
 var logger = utils.NewLogger("MatrixController:utils")
@@ -22,7 +23,11 @@ func unmarshalResponse(reader io.Reader) (result []*Matrix, err error) {
 
 func createUpdater(server string) utils.Updater {
 	return func(cache *utils.Cache) (interface{}, error) {
-		req, err := utils.NewPenguinRequest("result/matrix", server)
+		params := url.Values{}
+		params.Set("server", server)
+		params.Set("show_closed_zones", "true")
+
+		req, err := utils.NewPenguinRequest("result/matrix", &params)
 		if err != nil {
 			panic(err)
 		}
