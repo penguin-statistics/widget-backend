@@ -6,7 +6,9 @@ import (
 	"github.com/penguin-statistics/widget-backend/config"
 	"github.com/penguin-statistics/widget-backend/controller/matrix"
 	"github.com/penguin-statistics/widget-backend/controller/meta"
+	"github.com/penguin-statistics/widget-backend/controller/status"
 	"github.com/penguin-statistics/widget-backend/errors"
+	"github.com/penguin-statistics/widget-backend/middlewares"
 	"github.com/penguin-statistics/widget-backend/response"
 	"github.com/penguin-statistics/widget-backend/utils"
 	"net/http"
@@ -38,6 +40,7 @@ func main() {
 		},
 		MaxAge: int((time.Hour * 24 * 365).Seconds()),
 	}))
+	e.Use(middlewares.RequestMetadata())
 
 	l.Debugln("`echo` has been initialized")
 
@@ -50,36 +53,70 @@ func main() {
 
 	l.Debugln("render initialized. registering handlers...")
 
-	matrixGroup := e.Group("/result/:server", func(handlerFunc echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
-			server := c.Param("server")
-			if !config.ValidServer(server) {
-				return c.HTMLBlob(render.Error(errors.ErrInvalidServer))
+	// HTML Rendered Response
+	{
+		rendered := e.Group("/result/:server", middlewares.MatrixQuery(render))
+
+		renderedHandler := func(c echo.Context) error {
+			query := c.Get("query").(*matrix.Query)
+
+			records, err := controllers.Matrix.Query(query)
+			if err != nil {
+				return c.HTMLBlob(render.HTMLError(err))
 			}
-
-			c.Set("query", &matrix.Query{
-				Server:  server,
-				StageID: c.Param("stageId"),
-				ItemID:  c.Param("itemId"),
-			})
-
-			return handlerFunc(c)
+			return render.HTMLResponse(c, render.Marshal(records, query))
 		}
-	})
 
-	matrixHandler := func(c echo.Context) error {
-		query := c.Get("query").(*matrix.Query)
-
-		records, err := controllers.Matrix.Query(query)
-		if err != nil {
-			return c.HTMLBlob(render.Error(err))
-		}
-		return render.Response(c, render.Marshal(records, query))
+		rendered.GET("/stage/:stageId", renderedHandler)
+		rendered.GET("/item/:itemId", renderedHandler)
+		rendered.GET("/exact/:stageId/:itemId", renderedHandler)
 	}
 
-	matrixGroup.GET("/stage/:stageId", matrixHandler)
-	matrixGroup.GET("/item/:itemId", matrixHandler)
-	matrixGroup.GET("/exact/:stageId/:itemId", matrixHandler)
+	// API Response
+	{
+		api := e.Group("/api/result/:server", middlewares.MatrixQuery(render))
+
+		apiHandler := func(c echo.Context) error {
+			query := c.Get("query").(*matrix.Query)
+
+			records, err := controllers.Matrix.Query(query)
+			if err != nil {
+				return c.JSON(render.JSONError(err))
+			}
+			return render.JSONResponse(c, render.Marshal(records, query))
+		}
+
+		api.GET("/stage/:stageId", apiHandler)
+		api.GET("/item/:itemId", apiHandler)
+		api.GET("/exact/:stageId/:itemId", apiHandler)
+	}
+
+	e.GET("/_health", func(c echo.Context) error {
+		var statusInd int
+		statuses := map[string]map[string]*status.Status{}
+		for _, server := range config.Server {
+			serversStatus := controllers.Statuses(server)
+			for _, serverStatus := range serversStatus {
+				statusInd += serverStatus.FailCount
+			}
+			statuses[server] = serversStatus
+		}
+
+		httpStatus := http.StatusOK
+		// 4: cache type instances
+		if statusInd >= 4 {
+			httpStatus = http.StatusServiceUnavailable
+		}
+		return c.JSON(httpStatus, struct {
+			Status int `json:"status"`
+			CacheStatuses map[string]map[string]*status.Status `json:"caches"`
+			System SystemMetrics `json:"system"`
+		} {
+			Status: statusInd,
+			CacheStatuses: statuses,
+			System: newSystemMetrics(),
+		})
+	})
 
 	// widget static files
 	e.Static("/_widget", path.Join(config.UILocation, "_widget"))
@@ -95,7 +132,7 @@ func main() {
 
 	// match all other routes as 404 and display custom rendered error page
 	e.GET("*", func(c echo.Context) error {
-		return c.HTMLBlob(render.Error(errors.New("PageNotFound", "unrecognized resource path", errors.BlameUser)))
+		return c.HTMLBlob(render.HTMLError(errors.New("PageNotFound", "unrecognized resource path", errors.BlameUser)))
 	})
 
 	//l.Traceln(spew.Sdump(e.Routes()))

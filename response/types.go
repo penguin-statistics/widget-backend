@@ -8,8 +8,15 @@ import (
 	"github.com/penguin-statistics/widget-backend/controller/zone"
 )
 
+// RequestMetadata describes metadata related to the subsequent request
+type RequestMetadata struct {
+	// Mirror is the preferred mirror to select from; oftenly chose with reference of `CF-IPCountry` header
+	Mirror string `json:"mirror,omitempty"`
+}
+
 // MatrixResponse consists additional data from the matrix result itself
 type MatrixResponse struct {
+	Request *RequestMetadata `json:"request,omitempty"`
 	Query *matrix.Query `json:"query,omitempty"`
 
 	// CacheStatus represents statuses of underlying controllers and caches of current response
