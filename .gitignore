@@ -15,4 +15,11 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
+# private config
 config/ui.go
+
+# build output
+widget-backend
+
+# config
+config.yml

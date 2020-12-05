@@ -13,7 +13,7 @@ func New() *Controller {
 	logger := utils.NewLogger("StageController")
 
 	var caches []*utils.Cache
-	for _, server := range config.Server {
+	for _, server := range config.C.Upstream.Meta.Servers {
 		caches = append(
 			caches,
 			utils.NewCache(utils.CacheConfig{

@@ -1,7 +1,6 @@
 package errors
 
 import (
-	"encoding/json"
 	"net/http"
 )
 
@@ -30,12 +29,4 @@ func New(typ string, details interface{}, blame int) *Error {
 
 func (e *Error) Wrapped() *WrappedError {
 	return &WrappedError{Error: e}
-}
-
-func (e *Error) Error() string {
-	b, err := json.Marshal(&e)
-	if err != nil {
-		return "(marshalling failed) " + e.Type
-	}
-	return string(b)
 }

@@ -1,6 +1,0 @@
-package config
-
-const (
-	UILocation = "/home/web/widget-frontend/dist/"
-	DocLocation = "/home/web/widget-docs/dist/"
-)
