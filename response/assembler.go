@@ -71,7 +71,9 @@ func (m *Assembler) Marshal(records []*matrix.Matrix, query *matrix.Query) *Matr
 	return response
 }
 
-func injectHeaders(c echo.Context, response *MatrixResponse) *errors.Error {
+// inject injects Last-Modified headers along with other metadata that is used
+func inject(c echo.Context, response *MatrixResponse) *errors.Error {
+	// == Last-Modified
 	lastModified, err := time.Parse("2006-01-02", "1970-01-01")
 	if err != nil {
 		return errors.New("InternalError", "failed to calculate Last-Modified header: initialize failed", errors.BlameServer)
@@ -92,10 +94,21 @@ func injectHeaders(c echo.Context, response *MatrixResponse) *errors.Error {
 	// indicate Vary to improve cache behavior
 	c.Response().Header().Add("Vary", "CF-IPCountry")
 
+	// RequestMetadata
+
+	metadata := c.Get("meta").(*RequestMetadata)
+	response.Request = metadata
+
 	return nil
 }
 
 func (m *Assembler) HTMLResponse(c echo.Context, response *MatrixResponse) error {
+	// inject Last-Modified headers and other metadata
+	injectErr := inject(c, response)
+	if injectErr != nil {
+		return c.HTMLBlob(m.HTMLError(injectErr))
+	}
+
 	buf := bytes.Buffer{}
 	err := m.tmpl.Execute(&buf, struct {
 		PenguinWidgetData *MatrixResponse
@@ -107,18 +120,12 @@ func (m *Assembler) HTMLResponse(c echo.Context, response *MatrixResponse) error
 	}
 	body := buf.Bytes()
 
-	// initially lastModified is a very old time
-	injectErr := injectHeaders(c, response)
-	if injectErr != nil {
-		return c.HTMLBlob(m.HTMLError(injectErr))
-	}
-
 	return c.HTMLBlob(http.StatusOK, body)
 }
 
 func (m *Assembler) JSONResponse(c echo.Context, response *MatrixResponse) error {
-	// initially lastModified is a very old time
-	injectErr := injectHeaders(c, response)
+	// inject Last-Modified headers
+	injectErr := inject(c, response)
 	if injectErr != nil {
 		return c.JSON(injectErr.Blame, injectErr.Wrapped())
 	}

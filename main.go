@@ -161,8 +161,6 @@ func main() {
 		}
 	}
 
-	//l.Traceln(spew.Sdump(e.Routes()))
-
 	l.Debugln("handlers registered. starting http server...")
 
 	l.Fatalln(e.Start(config.C.Server.Listen))

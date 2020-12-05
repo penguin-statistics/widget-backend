@@ -36,10 +36,13 @@ func RequestMetadata() func(handlerFunc echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			// populate response.RequestMetadata fields
 			// by default mirror is "io"
-			mirror := "io"
+			mirror := ""
+			ipCountry := c.Request().Header.Get("CF-IPCountry")
 			// if user is in China Mainland, a "cn" mirror is preferred rather the "io" mirror
-			if c.Request().Header.Get("CF-IPCountry") == countries.CN.Alpha2() {
+			if ipCountry == countries.CN.Alpha2() {
 				mirror = "cn"
+			} else if ipCountry != "" {
+				mirror = "io"
 			}
 
 			c.Set("meta", &response.RequestMetadata{
