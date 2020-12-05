@@ -89,8 +89,6 @@ func injectHeaders(c echo.Context, response *MatrixResponse) *errors.Error {
 
 	// last modified according of the current cache status
 	c.Response().Header().Add(echo.HeaderLastModified, lastModified.UTC().Format(time.RFC1123))
-	// cache control status
-	c.Response().Header().Add("Cache-Control", "public, max-stale=3, max-age=60, stale-while-revalidate")
 	// indicate Vary to improve cache behavior
 	c.Response().Header().Add("Vary", "CF-IPCountry")
 

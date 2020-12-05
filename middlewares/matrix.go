@@ -3,10 +3,10 @@ package middlewares
 import (
 	"github.com/biter777/countries"
 	"github.com/labstack/echo"
-	"github.com/penguin-statistics/widget-backend/config"
 	"github.com/penguin-statistics/widget-backend/controller/matrix"
 	"github.com/penguin-statistics/widget-backend/errors"
 	"github.com/penguin-statistics/widget-backend/response"
+	"github.com/penguin-statistics/widget-backend/utils"
 )
 
 // MatrixQuery is an echo.MiddlewareFunc that verifies basic prerequisites that the request shall comply with and injects the formatted query request into echo.Context
@@ -14,7 +14,7 @@ func MatrixQuery(render *response.Assembler) func(handlerFunc echo.HandlerFunc) 
 	return func(handlerFunc echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			server := c.Param("server")
-			if !config.ValidServer(server) {
+			if !utils.ValidServer(server) {
 				return c.HTMLBlob(render.HTMLError(errors.ErrInvalidServer))
 			}
 
