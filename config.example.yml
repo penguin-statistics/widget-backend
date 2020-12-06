@@ -1,0 +1,29 @@
+# http server settings
+server:
+  # listen address of the server. default is `:8010`, indicates to listen port 8010 on all interfaces
+  listen: ":8010"
+
+# static service settings
+static:
+  # widget service, corresponding to `penguin-statistics/widget-frontend` repo
+  widget:
+    # assets endpoint. corresponding to `assetsDir` option in `vue.config.js` of the static service repo
+    endpoint: "_widget"
+    # root directory of actual files
+    root: "/path/to/penguin-statistics/widget-frontend/dist/"
+  # docs service, corresponding to `penguin-statistics/widget-docs` repo
+  docs:
+    # options omitted. see comments above
+    endpoint: "_docs"
+    root: "/path/to/penguin-statistics/widget-docs/dist/"
+
+# upstream settings
+upstream:
+  # metadata of upstream services
+  meta:
+    # list of servers supported
+    servers:
+      - CN
+      - US
+      - JP
+      - KR

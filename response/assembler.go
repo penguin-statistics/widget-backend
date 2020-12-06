@@ -102,6 +102,7 @@ func inject(c echo.Context, response *MatrixResponse) *errors.Error {
 	return nil
 }
 
+// HTMLResponse renders the response into HTML format and writes it into c
 func (m *Assembler) HTMLResponse(c echo.Context, response *MatrixResponse) error {
 	// inject Last-Modified headers and other metadata
 	injectErr := inject(c, response)
@@ -123,6 +124,7 @@ func (m *Assembler) HTMLResponse(c echo.Context, response *MatrixResponse) error
 	return c.HTMLBlob(http.StatusOK, body)
 }
 
+// JSONResponse renders the response into JSON format and writes it into c
 func (m *Assembler) JSONResponse(c echo.Context, response *MatrixResponse) error {
 	// inject Last-Modified headers
 	injectErr := inject(c, response)
@@ -133,6 +135,7 @@ func (m *Assembler) JSONResponse(c echo.Context, response *MatrixResponse) error
 	return c.JSON(http.StatusOK, response)
 }
 
+// HTMLError renders the error into HTML format and writes it into c
 func (m *Assembler) HTMLError(error *errors.Error) (int, []byte) {
 	buf := bytes.Buffer{}
 	err := m.tmpl.Execute(&buf, struct {
@@ -146,6 +149,7 @@ func (m *Assembler) HTMLError(error *errors.Error) (int, []byte) {
 	return error.Blame, buf.Bytes()
 }
 
+// JSONError renders the error into JSON format and writes it into c
 func (m *Assembler) JSONError(error *errors.Error) (int, interface{}) {
 	return error.Blame, error.Wrapped()
 }

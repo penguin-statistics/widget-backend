@@ -11,7 +11,7 @@ type StaticService struct {
 }
 
 // Config describes all configuration options for this app
-type ConfigT struct {
+type Config struct {
 	Server struct {
 		Listen string `yaml:"listen"`
 	} `yaml:"server"`
@@ -28,11 +28,12 @@ type ConfigT struct {
 	} `yaml:"upstream"`
 }
 
-var C ConfigT
+// C is the config content that was populated from the corresponding config file
+var C Config
 
 // New initializes config files
 func init() {
-	var config ConfigT
+	var config Config
 	c := configor.New(&configor.Config{
 		// set env prefix. now for e.g. Config.Server.Listen, use WIDGET_BACKEND_SERVER_LISTEN to specify its value
 		ENVPrefix:            "WIDGET_BACKEND",
