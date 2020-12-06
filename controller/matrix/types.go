@@ -21,6 +21,7 @@ type Matrix struct {
 	End      *int   `json:"end,omitempty"`
 }
 
+// Query describes a query on Matrix
 type Query struct {
 	// StageID is the query stageId of the current response; empty represents stageId hasn't been used as one of the constraints
 	StageID string `json:"stageId,omitempty"`

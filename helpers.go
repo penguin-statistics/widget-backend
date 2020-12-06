@@ -2,7 +2,7 @@ package main
 
 import "runtime"
 
-// from https://github.com/hellofresh/health-go/blob/b37d36e420e29217c2d25614268b00b655bb318c/health.go#L57-L69
+// SystemMetrics describe metrics from system; from https://github.com/hellofresh/health-go/blob/b37d36e420e29217c2d25614268b00b655bb318c/health.go#L57-L69
 type SystemMetrics struct {
 	// Version is the go version.
 	Version string `json:"version"`
@@ -16,7 +16,7 @@ type SystemMetrics struct {
 	AllocBytes int `json:"alloc_bytes"`
 }
 
-// from https://github.com/hellofresh/health-go/blob/b37d36e420e29217c2d25614268b00b655bb318c/health.go#L243-L254
+// newSystemMetrics reads current system metrics and return a SystemMetrics; from https://github.com/hellofresh/health-go/blob/b37d36e420e29217c2d25614268b00b655bb318c/health.go#L243-L254
 func newSystemMetrics() SystemMetrics {
 	s := runtime.MemStats{}
 	runtime.ReadMemStats(&s)

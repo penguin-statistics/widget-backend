@@ -1,6 +1,6 @@
 package errors
 
 var (
-	ErrInvalidServer = New("InvalidServer", "malformed parameter `server` provided", BlameUser)
-	ErrCantMarshal   = New("CantMarshal", "failed to populate matrix with metadata provided", BlameServer)
+	// ErrInvalidServer describes an error in which a malformed `server` provided
+	ErrInvalidServer = New("InvalidServer", "malformed `server` provided", BlameUser)
 )

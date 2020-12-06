@@ -35,7 +35,7 @@ func RequestMetadata() func(handlerFunc echo.HandlerFunc) echo.HandlerFunc {
 	return func(handlerFunc echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			// populate response.RequestMetadata fields
-			// by default mirror is "io"
+			// by default we don't provide mirror value
 			mirror := ""
 			ipCountry := c.Request().Header.Get("CF-IPCountry")
 			// if user is in China Mainland, a "cn" mirror is preferred rather the "io" mirror
