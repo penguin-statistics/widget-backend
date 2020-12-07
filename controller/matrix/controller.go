@@ -90,7 +90,7 @@ func (c *Controller) Query(query *Query) (results []*Matrix, err *errors.Error) 
 	unfiltered := len(data)
 
 	if query.StageID != "" && query.ItemID != "" {
-		results = filterItems(filterStages(data, query.StageID), query.ItemID)
+		results = filterStages(filterItems(data, query.ItemID), query.StageID)
 	} else {
 		if query.StageID != "" {
 			results = filterStages(data, query.StageID)
