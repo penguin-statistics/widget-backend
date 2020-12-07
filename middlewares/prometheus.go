@@ -12,6 +12,6 @@ func prometheusSkipper(c echo.Context) bool {
 }
 
 func NewPrometheus(e *echo.Echo) {
-	prom := prometheus.NewPrometheus("widget", prometheusSkipper)
+	prom := prometheus.NewPrometheus("echo", prometheusSkipper)
 	prom.Use(e)
 }
