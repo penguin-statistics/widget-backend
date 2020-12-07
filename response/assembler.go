@@ -3,7 +3,7 @@ package response
 import (
 	"bytes"
 	"fmt"
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 	"github.com/penguin-statistics/widget-backend/controller/matrix"
 	"github.com/penguin-statistics/widget-backend/controller/meta"
 	"github.com/penguin-statistics/widget-backend/errors"

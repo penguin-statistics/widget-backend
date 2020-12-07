@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
 // CacheType describes the type of cache shall be used, which its value is the content of the `Cache-Control` header that is being populated

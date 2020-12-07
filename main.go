@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/penguin-statistics/widget-backend/config"
 	"github.com/penguin-statistics/widget-backend/controller/matrix"
 	"github.com/penguin-statistics/widget-backend/controller/meta"
@@ -42,6 +42,7 @@ func main() {
 		MaxAge: int((time.Hour * 24 * 365).Seconds()),
 	}))
 	e.Use(middlewares.RequestMetadata())
+	middlewares.NewPrometheus(e)
 
 	l.Debugln("`echo` has been initialized")
 
