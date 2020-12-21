@@ -2,7 +2,7 @@ package middlewares
 
 import (
 	"github.com/biter777/countries"
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 	"github.com/penguin-statistics/widget-backend/controller/matrix"
 	"github.com/penguin-statistics/widget-backend/errors"
 	"github.com/penguin-statistics/widget-backend/response"
