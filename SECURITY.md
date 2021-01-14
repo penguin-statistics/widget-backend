@@ -8,6 +8,11 @@
 
 ## Reporting a Vulnerability
 
-First of all, we kindly ask you to **not disclose about the detail of the vulnerability** to the public before we have implemented a working fix that covers the particular vulnerability to protect our users from 0day attacks. Thanks in advance for making Penguin Statistics a better and safer site for everyone! ;)
+First of all, we kindly ask you to **not disclose about the detail of the vulnerability** to the public before we have implemented a working fix that covers the particular vulnerability to protect our users from 0day attacks.
 
-If you found a vulnerability in particular, the **`widget-backend`** repository, you may contact the maintainer of this repository, Galvin Gao at `me at galvingao dot com`, or you may also send an email to the webmaster Alviss Reimu (`alvissreimu at gmail`). W
+If you found a vulnerability in particular, the **`widget-backend`** repository, please do one of the following with your convenience:
+- [File a Security Advisory Report (recommended)](https://github.com/penguin-statistics/widget-backend/security/advisories/new) (that will privately disclose the vulnerability to the moderators of this organization)
+- Contact the maintainer of this repository, Galvin Gao, at `me at galvingao dot com`
+- Contact the webmaster and organizer of the Penguin Statistics organization, Alviss Reimu, at (`alvissreimu at gmail`).
+
+Thanks in advance for making Penguin Statistics a better and safer site for everyone! ;)
