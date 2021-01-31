@@ -6,12 +6,14 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/penguin-statistics/widget-backend/controller/matrix"
 	"github.com/penguin-statistics/widget-backend/controller/meta"
+	"github.com/penguin-statistics/widget-backend/controller/siteStats"
 	"github.com/penguin-statistics/widget-backend/errors"
 	"github.com/penguin-statistics/widget-backend/utils"
 	"html/template"
 	"io/ioutil"
 	"net/http"
 	"path"
+	"sort"
 	"time"
 )
 
@@ -34,9 +36,9 @@ func New(collection *meta.Collection, resourceLocation string) *Assembler {
 	}
 }
 
-// Marshal marshals records with their dependencies and gives MatrixResponse that contains rich metadata for current state of controllers
-func (m *Assembler) Marshal(records []*matrix.Matrix, query *matrix.Query) *MatrixResponse {
-	response := NewResponse()
+// MarshalMatrix marshals records with their dependencies and gives MatrixResponse that contains rich metadata for current state of controllers
+func (m *Assembler) MarshalMatrix(records []*matrix.Matrix, query *matrix.Query) *MatrixResponse {
+	response := NewMatrixResponse()
 
 	itemDeps := utils.NewUniString()
 	stageDeps := utils.NewUniString()
@@ -65,6 +67,76 @@ func (m *Assembler) Marshal(records []*matrix.Matrix, query *matrix.Query) *Matr
 
 	// populate remaining fields
 	response.Matrix = records
+	response.Query = query
+	response.CacheStatus = m.collection.Statuses(query.Server)
+
+	return response
+}
+
+// MarshalSiteStats marshals records with their dependencies and gives MatrixResponse that contains rich metadata for current state of controllers
+func (m *Assembler) MarshalSiteStats(records []siteStats.StageTime, query *siteStats.Query) *SiteStatsResponse {
+	stats := []*siteStats.SiteStat{}
+
+	OUTER:
+	for _, record := range records {
+		matrices, err := m.collection.Matrix.Query(&matrix.Query{Server: query.Server, StageID: record.StageID})
+		if err != nil {
+			continue
+		}
+		sort.SliceStable(matrices, func(i, j int) bool {
+			return (matrices[i].Quantity / matrices[i].Times) > (matrices[j].Quantity / matrices[j].Times)
+		})
+
+		now := time.Now()
+		for _, mat := range matrices {
+			if mat.Start != nil {
+				fmt.Println("got start", *mat.Start)
+				start := time.Unix(*mat.Start / 1000, 0)
+				// not yet arrived
+				if start.After(now) {
+					continue
+				}
+			}
+
+			if mat.End != nil {
+				fmt.Println("got end", *mat.End)
+				end := time.Unix(*mat.End / 1000, 0)
+				// already passed
+				if end.Before(now) {
+					continue
+				}
+			}
+
+			foundStage := m.collection.Stage.Stage(query.Server, mat.StageID)
+			// stage shall always qualify: right after the activity ends, server shall still allow
+			// some of the records to be able to show on the widget side
+
+			//if foundStage != nil && !foundStage.Existence.IsExist(query.Server) {
+			//	fmt.Println("stage does not qualify", foundStage.StageID, foundStage.Existence)
+			//	continue
+			//}
+
+			foundItem := m.collection.Item.Item(mat.ItemID)
+			if foundItem != nil && !foundItem.Existence.IsExist(query.Server) {
+				continue
+			}
+
+			stat := &siteStats.SiteStat{
+				Stage:    foundStage,
+				Item:     foundItem,
+				Quantity: mat.Quantity,
+				Times:    mat.Times,
+				RecentTimes:    record.RecentTimes,
+			}
+
+			stats = append(stats, stat)
+			continue OUTER
+		}
+	}
+
+	response := &SiteStatsResponse{}
+	// populate remaining fields
+	response.Stats = stats
 	response.Query = query
 	response.CacheStatus = m.collection.Statuses(query.Server)
 
@@ -124,8 +196,8 @@ func (m *Assembler) HTMLResponse(c echo.Context, response *MatrixResponse) error
 	return c.HTMLBlob(http.StatusOK, body)
 }
 
-// JSONResponse renders the response into JSON format and writes it into c
-func (m *Assembler) JSONResponse(c echo.Context, response *MatrixResponse) error {
+// JSONMatrixResponse renders the response into JSON format and writes it into c
+func (m *Assembler) JSONMatrixResponse(c echo.Context, response *MatrixResponse) error {
 	// inject Last-Modified headers
 	injectErr := inject(c, response)
 	if injectErr != nil {

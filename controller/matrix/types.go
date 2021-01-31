@@ -17,8 +17,8 @@ type Matrix struct {
 	ItemID   string `json:"itemId,omitempty"`
 	Quantity int    `json:"quantity"` // cannot omitempty as it is zeroable
 	Times    int    `json:"times"`    // cannot omitempty as it is zeroable
-	Start    *int   `json:"start,omitempty"`
-	End      *int   `json:"end,omitempty"`
+	Start    *int64   `json:"start,omitempty"`
+	End      *int64   `json:"end,omitempty"`
 }
 
 // Query describes a query on Matrix
