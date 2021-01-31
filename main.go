@@ -6,6 +6,7 @@ import (
 	"github.com/penguin-statistics/widget-backend/config"
 	"github.com/penguin-statistics/widget-backend/controller/matrix"
 	"github.com/penguin-statistics/widget-backend/controller/meta"
+	"github.com/penguin-statistics/widget-backend/controller/siteStats"
 	"github.com/penguin-statistics/widget-backend/controller/status"
 	"github.com/penguin-statistics/widget-backend/errors"
 	"github.com/penguin-statistics/widget-backend/middlewares"
@@ -55,7 +56,7 @@ func main() {
 
 	l.Debugln("render initialized. registering handlers...")
 
-	// HTML Rendered Response
+	// HTML Rendered Response (Matrix)
 	{
 		rendered := e.Group("/result/:server", middlewares.MatrixQuery(render), middlewares.PopulateCacheHeader(middlewares.CacheTypeDynamic))
 
@@ -66,7 +67,7 @@ func main() {
 			if err != nil {
 				return c.HTMLBlob(render.HTMLError(err))
 			}
-			return render.HTMLResponse(c, render.Marshal(records, query))
+			return render.HTMLResponse(c, render.MarshalMatrix(records, query))
 		}
 
 		rendered.GET("/stage/:stageId", renderedHandler)
@@ -74,7 +75,7 @@ func main() {
 		rendered.GET("/exact/:stageId/:itemId", renderedHandler)
 	}
 
-	// API Response
+	// API Response (Matrix)
 	{
 		api := e.Group("/api/result/:server", middlewares.MatrixQuery(render), middlewares.PopulateCacheHeader(middlewares.CacheTypeDynamic))
 
@@ -85,12 +86,26 @@ func main() {
 			if err != nil {
 				return c.JSON(render.JSONError(err))
 			}
-			return render.JSONResponse(c, render.Marshal(records, query))
+			return render.JSONMatrixResponse(c, render.MarshalMatrix(records, query))
 		}
 
 		api.GET("/stage/:stageId", apiHandler)
 		api.GET("/item/:itemId", apiHandler)
 		api.GET("/exact/:stageId/:itemId", apiHandler)
+	}
+
+	// API Response (SiteStats)
+	{
+		statsApi := e.Group("/api/stats/:server", middlewares.SiteStatsQuery(render), middlewares.PopulateCacheHeader(middlewares.CacheTypeDynamic))
+		statsApi.GET("", func(c echo.Context) error {
+			query := c.Get("query").(*siteStats.Query)
+
+			records, err := controllers.SiteStats.Query(query)
+			if err != nil {
+				return c.JSON(render.JSONError(err))
+			}
+			return c.JSON(http.StatusOK, render.MarshalSiteStats(records, query))
+		})
 	}
 
 	e.GET("/_health", func(c echo.Context) error {
@@ -105,8 +120,8 @@ func main() {
 		}
 
 		httpStatus := http.StatusOK
-		// 4: cache type instances
-		if statusInd >= 4 {
+		// 5: cache type instances
+		if statusInd >= 5 {
 			httpStatus = http.StatusServiceUnavailable
 		}
 		return c.JSON(httpStatus, struct {

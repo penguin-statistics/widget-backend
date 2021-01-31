@@ -3,6 +3,7 @@ package meta
 import (
 	"github.com/penguin-statistics/widget-backend/controller/item"
 	"github.com/penguin-statistics/widget-backend/controller/matrix"
+	"github.com/penguin-statistics/widget-backend/controller/siteStats"
 	"github.com/penguin-statistics/widget-backend/controller/stage"
 	"github.com/penguin-statistics/widget-backend/controller/status"
 	"github.com/penguin-statistics/widget-backend/controller/zone"
@@ -14,6 +15,7 @@ type Collection struct {
 	Matrix *matrix.Controller
 	Stage  *stage.Controller
 	Zone   *zone.Controller
+	SiteStats   *siteStats.Controller
 }
 
 // NewCollection creates all underlying controllers and returns Collection
@@ -23,6 +25,7 @@ func NewCollection() *Collection {
 		Matrix: matrix.New(),
 		Stage:  stage.New(),
 		Zone:   zone.New(),
+		SiteStats:   siteStats.New(),
 	}
 }
 
@@ -33,5 +36,6 @@ func (c *Collection) Statuses(server string) map[string]*status.Status {
 		"matrix": c.Matrix.Status(server),
 		"stage":  c.Stage.Status(server),
 		"zone":   c.Zone.Status(server),
+		"siteStats":   c.SiteStats.Status(server),
 	}
 }

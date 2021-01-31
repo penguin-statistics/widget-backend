@@ -25,7 +25,7 @@ func BenchmarkStage(b *testing.B) {
 			b.Error(err)
 		}
 
-		Render.Marshal(records, query)
+		Render.MarshalMatrix(records, query)
 	}
 }
 
@@ -38,7 +38,7 @@ func BenchmarkItem(b *testing.B) {
 			b.Error(err)
 		}
 
-		Render.Marshal(records, query)
+		Render.MarshalMatrix(records, query)
 	}
 }
 
@@ -51,6 +51,6 @@ func BenchmarkExact(b *testing.B) {
 			b.Error(err)
 		}
 
-		Render.Marshal(records, query)
+		Render.MarshalMatrix(records, query)
 	}
 }
