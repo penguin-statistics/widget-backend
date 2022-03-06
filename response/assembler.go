@@ -3,18 +3,20 @@ package response
 import (
 	"bytes"
 	"fmt"
-	"github.com/labstack/echo/v4"
-	"github.com/penguin-statistics/widget-backend/controller/matrix"
-	"github.com/penguin-statistics/widget-backend/controller/meta"
-	"github.com/penguin-statistics/widget-backend/controller/siteStats"
-	"github.com/penguin-statistics/widget-backend/errors"
-	"github.com/penguin-statistics/widget-backend/utils"
 	"html/template"
 	"io/ioutil"
 	"net/http"
 	"path"
 	"sort"
 	"time"
+
+	"github.com/labstack/echo/v4"
+
+	"github.com/penguin-statistics/widget-backend/controller/matrix"
+	"github.com/penguin-statistics/widget-backend/controller/meta"
+	"github.com/penguin-statistics/widget-backend/controller/siteStats"
+	"github.com/penguin-statistics/widget-backend/errors"
+	"github.com/penguin-statistics/widget-backend/utils"
 )
 
 // Assembler is to marshal records
@@ -77,21 +79,20 @@ func (m *Assembler) MarshalMatrix(records []*matrix.Matrix, query *matrix.Query)
 func (m *Assembler) MarshalSiteStats(records []siteStats.StageTime, query *siteStats.Query) *SiteStatsResponse {
 	stats := []*siteStats.SiteStat{}
 
-	OUTER:
+OUTER:
 	for _, record := range records {
 		matrices, err := m.collection.Matrix.Query(&matrix.Query{Server: query.Server, StageID: record.StageID})
 		if err != nil {
 			continue
 		}
 		sort.SliceStable(matrices, func(i, j int) bool {
-			return (matrices[i].Quantity / matrices[i].Times) > (matrices[j].Quantity / matrices[j].Times)
+			return (float64(matrices[i].Quantity) / float64(matrices[i].Times)) > (float64(matrices[j].Quantity) / float64(matrices[j].Times))
 		})
 
 		now := time.Now()
 		for _, mat := range matrices {
 			if mat.Start != nil {
-				fmt.Println("got start", *mat.Start)
-				start := time.Unix(*mat.Start / 1000, 0)
+				start := time.Unix(*mat.Start/1000, 0)
 				// not yet arrived
 				if start.After(now) {
 					continue
@@ -99,8 +100,7 @@ func (m *Assembler) MarshalSiteStats(records []siteStats.StageTime, query *siteS
 			}
 
 			if mat.End != nil {
-				fmt.Println("got end", *mat.End)
-				end := time.Unix(*mat.End / 1000, 0)
+				end := time.Unix(*mat.End/1000, 0)
 				// already passed
 				if end.Before(now) {
 					continue
@@ -108,25 +108,17 @@ func (m *Assembler) MarshalSiteStats(records []siteStats.StageTime, query *siteS
 			}
 
 			foundStage := m.collection.Stage.Stage(query.Server, mat.StageID)
-			// stage shall always qualify: right after the activity ends, server shall still allow
+			// stage & item shall always qualify: right after the activity ends, server shall still allow
 			// some of the records to be able to show on the widget side
 
-			//if foundStage != nil && !foundStage.Existence.IsExist(query.Server) {
-			//	fmt.Println("stage does not qualify", foundStage.StageID, foundStage.Existence)
-			//	continue
-			//}
-
 			foundItem := m.collection.Item.Item(mat.ItemID)
-			if foundItem != nil && !foundItem.Existence.IsExist(query.Server) {
-				continue
-			}
 
 			stat := &siteStats.SiteStat{
-				Stage:    foundStage,
-				Item:     foundItem,
-				Quantity: mat.Quantity,
-				Times:    mat.Times,
-				RecentTimes:    record.RecentTimes,
+				Stage:       foundStage,
+				Item:        foundItem,
+				Quantity:    mat.Quantity,
+				Times:       mat.Times,
+				RecentTimes: record.RecentTimes,
 			}
 
 			stats = append(stats, stat)
@@ -225,4 +217,3 @@ func (m *Assembler) HTMLError(error *errors.Error) (int, []byte) {
 func (m *Assembler) JSONError(error *errors.Error) (int, interface{}) {
 	return error.Blame, error.Wrapped()
 }
-
