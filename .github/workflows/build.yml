@@ -1,0 +1,38 @@
+name: Build Docker Image
+
+on:
+  push:
+    branches:
+      - "main"
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/golang@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --sarif-file-output=snyk.sarif
+
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: snyk.sarif
+
+      - name: Build and Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@3.04
+        with:
+          name: penguin-statistics/widget-backend
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ghcr.io
+          tags: "latest,${{ github.ref }}"

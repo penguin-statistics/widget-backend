@@ -7,7 +7,7 @@ import (
 // StaticService describes a service that serves static files
 type StaticService struct {
 	Endpoint string `yaml:"endpoint"`
-	Root string `yaml:"root"`
+	Root     string `yaml:"root"`
 }
 
 // Config describes all configuration options for this app
@@ -17,12 +17,12 @@ type Config struct {
 	} `yaml:"server"`
 
 	Static struct {
-		Widget  StaticService `yaml:"widget"`
-		Docs    StaticService `yaml:"docs"`
+		Widget StaticService `yaml:"widget" anonymous:"true"`
+		Docs   StaticService `yaml:"docs" anonymous:"true"`
 	} `yaml:"static"`
 
 	Upstream struct {
-		Meta struct{
+		Meta struct {
 			Servers []string `yaml:"servers"`
 		} `yaml:"meta"`
 	} `yaml:"upstream"`
