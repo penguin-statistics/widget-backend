@@ -1,10 +1,11 @@
 package utils
 
 import (
-	"github.com/sirupsen/logrus"
 	"net/http"
 	"sync"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 // AcceptableFailCount describes how many fails would be tolerated until the server refuses to serve any more data
@@ -114,7 +115,10 @@ func NewCache(config CacheConfig) *Cache {
 	onFetchErr := func(err error) {
 		if err != nil {
 			instance.Logger.Errorln("error occurred when trying to fetch new data", err)
+
+			instance.mutex.RLock()
 			instance.FailCount++
+			instance.mutex.RUnlock()
 		}
 	}
 
@@ -125,11 +129,8 @@ func NewCache(config CacheConfig) *Cache {
 	onFetchErr(instance.Update())
 
 	go func() {
-		for {
-			select {
-			case <-ticker.C:
-				onFetchErr(instance.Update())
-			}
+		for range ticker.C {
+			onFetchErr(instance.Update())
 		}
 	}()
 
