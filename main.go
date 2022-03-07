@@ -1,8 +1,14 @@
 package main
 
 import (
+	"io/ioutil"
+	"net/http"
+	"path"
+	"time"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+
 	"github.com/penguin-statistics/widget-backend/config"
 	"github.com/penguin-statistics/widget-backend/controller/matrix"
 	"github.com/penguin-statistics/widget-backend/controller/meta"
@@ -12,10 +18,6 @@ import (
 	"github.com/penguin-statistics/widget-backend/middlewares"
 	"github.com/penguin-statistics/widget-backend/response"
 	"github.com/penguin-statistics/widget-backend/utils"
-	"io/ioutil"
-	"net/http"
-	"path"
-	"time"
 )
 
 var l = utils.NewLogger("main")
@@ -44,6 +46,8 @@ func main() {
 	}))
 	e.Use(middlewares.RequestMetadata())
 	middlewares.NewPrometheus(e)
+
+	l.Debugln("config loaded as", config.C)
 
 	l.Debugln("`echo` has been initialized")
 
@@ -125,13 +129,13 @@ func main() {
 			httpStatus = http.StatusServiceUnavailable
 		}
 		return c.JSON(httpStatus, struct {
-			Status int `json:"status"`
+			Status        int                                  `json:"status"`
 			CacheStatuses map[string]map[string]*status.Status `json:"caches"`
-			System SystemMetrics `json:"system"`
-		} {
-			Status: statusInd,
+			System        SystemMetrics                        `json:"system"`
+		}{
+			Status:        statusInd,
 			CacheStatuses: statuses,
-			System: newSystemMetrics(),
+			System:        newSystemMetrics(),
 		})
 	}, middlewares.PopulateCacheHeader(middlewares.CacheTypeNoCache))
 
