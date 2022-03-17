@@ -42,7 +42,6 @@ RUN apk add --no-cache tini
 
 COPY --from=gobuilder /app/widgetbackend /app/widgetbackend
 COPY --from=gobuilder /app/config.example.yml /app/config.yml
-EXPOSE 8080
 
 COPY --from=webbuilder /build/widget-docs/dist /app/widget-docs
 COPY --from=webbuilder /build/widget-frontend/dist /app/widget-frontend
