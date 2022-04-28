@@ -124,18 +124,15 @@ func main() {
 		}
 
 		httpStatus := http.StatusOK
-		// 5: cache type instances
-		if statusInd >= 5 {
+		if statusInd >= len(statuses) {
 			httpStatus = http.StatusServiceUnavailable
 		}
 		return c.JSON(httpStatus, struct {
 			Status        int                                  `json:"status"`
 			CacheStatuses map[string]map[string]*status.Status `json:"caches"`
-			System        SystemMetrics                        `json:"system"`
 		}{
 			Status:        statusInd,
 			CacheStatuses: statuses,
-			System:        newSystemMetrics(),
 		})
 	}, middlewares.PopulateCacheHeader(middlewares.CacheTypeNoCache))
 
