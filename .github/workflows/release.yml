@@ -49,7 +49,7 @@ jobs:
     name: Run Tests & Coverage
     runs-on: ubuntu-latest
     needs: build
-    container: ghcr.io/penguin-statistics/widget-backend:${{ env.GIT_TAG }}
+    container: ghcr.io/penguin-statistics/widget-backend:latest
     steps:
       - name: Run coverage
         run: go test -race -coverprofile=coverage.txt -covermode=atomic
