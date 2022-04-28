@@ -13,7 +13,7 @@ Notice that default values have been set for all data controllers and their cach
 and the one SHOULD be checking them before deploying such service. Please also notice
 that, such service which probably has already been deployed, is NOT suitable for public
 usage except for the render of widgets. Developers SHOULD use the Penguin Statistics
-public API which is documented at https://developer.penguin-stats.io/docs/ instead of using
-this service in order to reduce server load.
+public API which is documented at https://developer.penguin-stats.io/docs/ instead of hosting
+this service themselves in order to reduce server load.
 */
 package main

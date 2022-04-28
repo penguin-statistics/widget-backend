@@ -1,4 +1,4 @@
-name: Build Docker Image
+name: Release
 
 on:
   push:
@@ -12,6 +12,7 @@ concurrency:
 
 jobs:
   build:
+    name: Build Docker Image
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -35,8 +36,8 @@ jobs:
         with:
           push: true
           tags: |
-            penguin-statistics/widget-backend:latest,
-            penguin-statistics/widget-backend:${{ env.GIT_TAG }}
+            ghcr.io/penguin-statistics/widget-backend:latest,
+            ghcr.io/penguin-statistics/widget-backend:${{ env.GIT_TAG }}
 
       - name: Create GitHub Release
         uses: marvinpinto/action-automatic-releases@v1
@@ -44,3 +45,15 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
 
+  codecov:
+    name: Run Tests & Coverage
+    runs-on: ubuntu-latest
+    needs: build
+    container: ghcr.io/penguin-statistics/widget-backend:${{ env.GIT_TAG }}
+    steps:
+      - name: Run coverage
+        run: go test -race -coverprofile=coverage.txt -covermode=atomic
+
+      - name: Upload coverage to Codecov
+        run: bash <(curl -s https://codecov.io/bash)
+    
