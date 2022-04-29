@@ -43,7 +43,8 @@ jobs:
         uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          prerelease: false
+          # if `alpha` or `beta` is in the tag, then it will be a pre-release
+          prerelease: ${{ env.GIT_TAG | grep -q 'alpha' || env.GIT_TAG | grep -q 'beta' }}
 
   codecov:
     name: Run Tests & Coverage
