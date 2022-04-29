@@ -1,6 +1,6 @@
 # testing runner
 
-FROM node:16-alpine AS webbuilder
+FROM node:16-alpine AS testingwebbuilder
 
 RUN apk update && apk add git make gcc g++ yarn
 
@@ -16,11 +16,10 @@ WORKDIR /build/widget-frontend
 
 RUN yarn install && yarn build
 
-FROM golang:1.17-alpine AS base
+FROM golang:1.17-alpine
 WORKDIR /app
 
 # builder
-FROM base AS gobuilder
 ENV GOOS linux
 ENV GOARCH amd64
 ARG CODECOV_TOKEN
@@ -38,8 +37,8 @@ RUN apk add --no-cache libc6-compat
 COPY --from=gobuilder /app/widgetbackend /app/widgetbackend
 COPY --from=gobuilder /app/config.example.yml /app/config.yml
 
-COPY --from=webbuilder /build/widget-docs/dist /app/widget-docs
-COPY --from=webbuilder /build/widget-frontend/dist /app/widget-frontend
+COPY --from=testingwebbuilder /build/widget-docs/dist /app/widget-docs
+COPY --from=testingwebbuilder /build/widget-frontend/dist /app/widget-frontend
 
 ENV WIDGET_BACKEND_STATIC_DOCS_ROOT=/app/widget-docs
 ENV WIDGET_BACKEND_STATIC_WIDGET_ROOT=/app/widget-frontend
