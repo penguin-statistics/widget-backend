@@ -40,6 +40,6 @@ ENV WIDGET_BACKEND_STATIC_WIDGET_ROOT=/app/widget-frontend
 
 RUN go test -race -coverprofile=coverage.out -covermode=atomic
 
-RUN curl -Os https://uploader.codecov.io/latest/alpine/codecov \
+RUN curl -Os https://uploader.codecov.io/latest/linux/codecov \
     chmod +x codecov \
     ./codecov -t $CODECOV_TOKEN
