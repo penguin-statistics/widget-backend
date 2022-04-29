@@ -48,12 +48,12 @@ jobs:
   codecov:
     name: Run Tests & Coverage
     runs-on: ubuntu-latest
-    needs: build
-    container: ghcr.io/penguin-statistics/widget-backend:latest
     steps:
-      - name: Run coverage
-        run: go test -race -coverprofile=coverage.txt -covermode=atomic
+      - uses: actions/checkout@v2
 
-      - name: Upload coverage to Codecov
-        run: bash <(curl -s https://codecov.io/bash)
-    
+      - name: Run Tests & Upload Coverage
+        uses: docker/build-push-action@v2
+        with:
+          push: false
+          build-args: CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }}
+          file: ./Dockerfile.testing

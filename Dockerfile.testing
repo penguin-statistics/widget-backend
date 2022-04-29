@@ -1,4 +1,4 @@
-# production service runner
+# testing runner
 
 FROM node:16-alpine AS webbuilder
 
@@ -23,6 +23,7 @@ WORKDIR /app
 FROM base AS gobuilder
 ENV GOOS linux
 ENV GOARCH amd64
+ARG CODECOV_TOKEN
 
 # modules: utilize build cache
 COPY go.mod ./
@@ -32,15 +33,7 @@ COPY go.sum ./
 RUN go mod download
 COPY . .
 
-# build the binary
-RUN go build -o widgetbackend .
-
-# runner
-FROM base AS runner
 RUN apk add --no-cache libc6-compat
-
-RUN apk add --no-cache tini
-# Tini is now available at /sbin/tini
 
 COPY --from=gobuilder /app/widgetbackend /app/widgetbackend
 COPY --from=gobuilder /app/config.example.yml /app/config.yml
@@ -51,5 +44,8 @@ COPY --from=webbuilder /build/widget-frontend/dist /app/widget-frontend
 ENV WIDGET_BACKEND_STATIC_DOCS_ROOT=/app/widget-docs
 ENV WIDGET_BACKEND_STATIC_WIDGET_ROOT=/app/widget-frontend
 
-ENTRYPOINT ["/sbin/tini", "--"]
-CMD [ "/app/widgetbackend" ]
+RUN go test -race -coverprofile=coverage.out -covermode=atomic
+
+RUN curl -Os https://uploader.codecov.io/latest/alpine/codecov \
+    chmod +x codecov \
+    ./codecov -t $CODECOV_TOKEN
