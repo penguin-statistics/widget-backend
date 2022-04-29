@@ -32,8 +32,6 @@ COPY go.sum ./
 RUN go mod download
 COPY . .
 
-RUN apk add --no-cache libc6-compat
-
 COPY --from=testingwebbuilder /build/widget-docs/dist /app/widget-docs
 COPY --from=testingwebbuilder /build/widget-frontend/dist /app/widget-frontend
 
