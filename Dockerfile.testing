@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1.3
 # testing runner
 
 FROM node:16-alpine AS testingwebbuilder
@@ -40,6 +41,4 @@ ENV WIDGET_BACKEND_STATIC_WIDGET_ROOT=/app/widget-frontend
 
 RUN go test -race -coverprofile=coverage.out -covermode=atomic
 
-RUN curl -Os https://uploader.codecov.io/latest/linux/codecov && \
-    chmod +x codecov && \
-    ./codecov -v -t $CODECOV_TOKEN
+RUN --mount=type=bind,source=./shared cp /app/coverage.out /shared/coverage.out

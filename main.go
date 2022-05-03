@@ -44,6 +44,7 @@ func main() {
 		},
 		MaxAge: int((time.Hour * 24 * 365).Seconds()),
 	}))
+
 	e.Use(middlewares.RequestMetadata())
 	middlewares.NewPrometheus(e)
 
