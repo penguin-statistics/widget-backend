@@ -31,7 +31,7 @@ jobs:
           echo "VERSION=${GITHUB_REF/refs\/tags\//}+${TRUNCATED_GITHUB_SHA}" >> $GITHUB_ENV
           echo "GIT_TAG=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
           # if `alpha` or `beta` is in the tag, then it will be a pre-release
-          export PRE_RELEASE=false >> $GITHUB_ENV
+          echo "PRE_RELEASE=false" >> $GITHUB_ENV
           if [[ ${GITHUB_REF} == *"alpha"* ]] || [[ ${GITHUB_REF} == *"beta"* ]]; then
             echo "PRE_RELEASE=true" >> $GITHUB_ENV
           fi
@@ -48,7 +48,7 @@ jobs:
         uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          prerelease: ${{ env.PRE_RELEASE }}
+          prerelease: "${{ env.PRE_RELEASE }}"
 
   codecov:
     name: Run Tests & Coverage
