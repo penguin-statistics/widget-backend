@@ -43,8 +43,6 @@ jobs:
           tags: |
             ghcr.io/penguin-statistics/widget-backend:latest,
             ghcr.io/penguin-statistics/widget-backend:${{ env.GIT_TAG }}
-          cache-from: type=registry,ref=ghcr.io/penguin-statistics/widget-backend:latest
-          cache-to: type=inline
 
       - name: Create GitHub Release
         uses: marvinpinto/action-automatic-releases@v1.2.1
