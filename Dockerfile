@@ -20,11 +20,10 @@ WORKDIR /build/widget-frontend
 
 RUN yarn install && yarn build
 
-FROM golang:1.18-alpine AS base
+# runtime builder
+FROM golang:1.18-alpine AS gobuilder
 WORKDIR /app
 
-# builder
-FROM base AS gobuilder
 ENV GOOS linux
 ENV GOARCH amd64
 
