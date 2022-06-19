@@ -17,18 +17,18 @@ type RequestMetadata struct {
 
 // SiteStatsResponse consists additional data from the site stats result itself
 type SiteStatsResponse struct {
-	Query *siteStats.Query `json:"query,omitempty"`
+	Query *siteStats.Query `json:"query"`
 
 	// CacheStatus represents statuses of underlying controllers and caches of current response
-	CacheStatus map[string]*status.Status `json:"cache,omitempty"`
+	CacheStatus map[string]*status.Status `json:"cache"`
 
-	Stats  []*siteStats.SiteStat     `json:"stats,omitempty"`
+	Stats []*siteStats.SiteStat `json:"stats"`
 }
 
 // MatrixResponse consists additional data from the matrix result itself
 type MatrixResponse struct {
 	Request *RequestMetadata `json:"request,omitempty"`
-	Query *matrix.Query `json:"query,omitempty"`
+	Query   *matrix.Query    `json:"query,omitempty"`
 
 	// CacheStatus represents statuses of underlying controllers and caches of current response
 	CacheStatus map[string]*status.Status `json:"cache,omitempty"`

@@ -19,6 +19,10 @@ import (
 	"github.com/penguin-statistics/widget-backend/utils"
 )
 
+const MaxSiteStatsAmount = 3
+
+var logger = utils.NewLogger("SiteStatsController")
+
 // Assembler is to marshal records
 type Assembler struct {
 	collection *meta.Collection
@@ -79,34 +83,21 @@ func (m *Assembler) MarshalMatrix(records []*matrix.Matrix, query *matrix.Query)
 func (m *Assembler) MarshalSiteStats(records []siteStats.StageTime, query *siteStats.Query) *SiteStatsResponse {
 	stats := []*siteStats.SiteStat{}
 
-OUTER:
 	for _, record := range records {
+		if len(stats) >= MaxSiteStatsAmount {
+			break
+		}
 		matrices, err := m.collection.Matrix.Query(&matrix.Query{Server: query.Server, StageID: record.StageID})
 		if err != nil {
+			logger.Warnln("failed to query matrix for stage", "stage", record.StageID, "error", err)
 			continue
 		}
 		sort.SliceStable(matrices, func(i, j int) bool {
 			return (float64(matrices[i].Quantity) / float64(matrices[i].Times)) > (float64(matrices[j].Quantity) / float64(matrices[j].Times))
 		})
 
-		now := time.Now()
-		for _, mat := range matrices {
-			if mat.Start != nil {
-				start := time.Unix(*mat.Start/1000, 0)
-				// not yet arrived
-				if start.After(now) {
-					continue
-				}
-			}
-
-			if mat.End != nil {
-				end := time.Unix(*mat.End/1000, 0)
-				// already passed
-				if end.Before(now) {
-					continue
-				}
-			}
-
+		if len(matrices) > 0 {
+			mat := matrices[0]
 			foundStage := m.collection.Stage.Stage(query.Server, mat.StageID)
 			// stage & item shall always qualify: right after the activity ends, server shall still allow
 			// some of the records to be able to show on the widget side
@@ -122,7 +113,6 @@ OUTER:
 			}
 
 			stats = append(stats, stat)
-			continue OUTER
 		}
 	}
 

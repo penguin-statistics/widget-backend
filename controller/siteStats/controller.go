@@ -8,10 +8,6 @@ import (
 	"time"
 )
 
-const (
-	MaxSiteStatsAmount = 3
-)
-
 // New creates a new Controller with its corresponding utils.Cache
 func New() *Controller {
 	logger := utils.NewLogger("SiteStatsController")
@@ -74,11 +70,9 @@ func (c *Controller) Query(query *Query) (results []StageTime, err *errors.Error
 		return nil, errors.New("FetchData", "failed to fetch siteStats data from cache", errors.BlameServer)
 	}
 
-	results = data[:MaxSiteStatsAmount]
-
-	if len(results) == 0 {
+	if len(data) == 0 {
 		return nil, errors.New("NotFound", "no records have been found with query params provided", errors.BlameUser)
 	}
 
-	return results, nil
+	return data, nil
 }
