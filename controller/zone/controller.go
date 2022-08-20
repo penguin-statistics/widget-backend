@@ -1,9 +1,10 @@
 package zone
 
 import (
+	"time"
+
 	"github.com/penguin-statistics/widget-backend/controller/status"
 	"github.com/penguin-statistics/widget-backend/utils"
-	"time"
 )
 
 // New creates a new Controller with its corresponding utils.Cache
@@ -11,7 +12,7 @@ func New() *Controller {
 	logger := utils.NewLogger("ZoneController")
 
 	cache := utils.NewCache(utils.CacheConfig{
-		Name:     "Zone",
+		Name:     "zone",
 		Server:   "",
 		Interval: time.Minute * 30,
 		Updater:  updater,

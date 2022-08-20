@@ -1,11 +1,12 @@
 package siteStats
 
 import (
+	"time"
+
 	"github.com/penguin-statistics/widget-backend/config"
 	"github.com/penguin-statistics/widget-backend/controller/status"
 	"github.com/penguin-statistics/widget-backend/errors"
 	"github.com/penguin-statistics/widget-backend/utils"
-	"time"
 )
 
 // New creates a new Controller with its corresponding utils.Cache
@@ -17,7 +18,7 @@ func New() *Controller {
 		caches = append(
 			caches,
 			utils.NewCache(utils.CacheConfig{
-				Name:     "SiteStat",
+				Name:     "siteStats",
 				Server:   server,
 				Interval: time.Minute * 5,
 				Updater:  createUpdater(server),

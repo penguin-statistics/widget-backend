@@ -1,9 +1,10 @@
 package item
 
 import (
+	"time"
+
 	"github.com/penguin-statistics/widget-backend/controller/status"
 	"github.com/penguin-statistics/widget-backend/utils"
-	"time"
 )
 
 // New creates a new Controller with its corresponding utils.Cache
@@ -11,7 +12,7 @@ func New() *Controller {
 	logger := utils.NewLogger("ItemController")
 
 	cache := utils.NewCache(utils.CacheConfig{
-		Name:     "Item",
+		Name:     "item",
 		Server:   "",
 		Interval: time.Minute * 30,
 		Updater:  updater,
