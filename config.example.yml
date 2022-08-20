@@ -1,3 +1,6 @@
+# dev mode
+dev_mode: true
+
 # http server settings
 server:
   # listen address of the server. default is `:8010`, indicates to listen port 8010 on all interfaces

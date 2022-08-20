@@ -29,6 +29,8 @@ func init() {
 func main() {
 	// echo
 	e := echo.New()
+	e.HideBanner = true
+	e.HidePort = true
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{
 			"*",

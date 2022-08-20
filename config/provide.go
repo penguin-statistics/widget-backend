@@ -12,6 +12,8 @@ type StaticService struct {
 
 // Config describes all configuration options for this app
 type Config struct {
+	DevMode bool `yaml:"dev_mode" default:"false"`
+
 	Server struct {
 		Listen string `yaml:"listen"`
 	} `yaml:"server"`
