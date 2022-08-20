@@ -99,6 +99,11 @@ func (c *Cache) Ready() bool {
 
 // NewCache creates a new Cache with CacheConfig provided
 func NewCache(config CacheConfig) *Cache {
+	loggerName := "cache:" + config.Name
+	if config.Server != "" {
+		loggerName += ":" + config.Server
+	}
+
 	instance := &Cache{
 		Name:     config.Name,
 		Server:   config.Server,
@@ -107,7 +112,7 @@ func NewCache(config CacheConfig) *Cache {
 			Timeout: DefaultTimeout,
 		},
 		Updater: config.Updater,
-		Logger:  NewLogger("Cache:" + config.Name + ":" + config.Server),
+		Logger:  NewLogger(loggerName),
 
 		mutex: &sync.RWMutex{},
 	}
