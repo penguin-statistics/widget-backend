@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"fmt"
+
 	"github.com/sirupsen/logrus"
 
 	"github.com/penguin-statistics/widget-backend/config"
@@ -14,6 +16,7 @@ func NewLogger(name string) *logrus.Entry {
 		"name": name,
 	})
 	if config.C.DevMode {
+		fmt.Println("dev mode true")
 		logger.SetLevel(logrus.TraceLevel)
 	} else {
 		logger.SetFormatter(&logrus.JSONFormatter{})
