@@ -6,7 +6,11 @@ RUN apk update && apk add git make gcc g++ yarn
 
 FROM webbuilderbase AS docsbuilder
 
-RUN git clone https://github.com/penguin-statistics/widget-docs /build/widget-docs
+ARG BUILD_DOCS_COMMIT
+
+RUN git clone https://github.com/penguin-statistics/widget-docs /build/widget-docs && \
+    cd /build/widget-docs && \
+    git checkout $BUILD_DOCS_COMMIT
 
 WORKDIR /build/widget-docs
 
@@ -14,7 +18,11 @@ RUN yarn install && yarn build
 
 FROM webbuilderbase AS frontendbuilder
 
-RUN git clone https://github.com/penguin-statistics/widget-frontend /build/widget-frontend
+ARG BUILD_WEB_COMMIT
+
+RUN git clone https://github.com/penguin-statistics/widget-frontend /build/widget-frontend && \
+    cd /build/widget-frontend && \
+    git checkout $BUILD_WEB_COMMIT
 
 WORKDIR /build/widget-frontend
 

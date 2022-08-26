@@ -28,6 +28,9 @@ jobs:
         with:
           version: ${{ steps.git-meta.outputs.version }}
           repository: 'penguin-statistics/widget-backend'
+          build-args: |
+            BUILD_DOCS_COMMIT=b7f45a0a0d286ac6b00a3684190319e42acaacda
+            BUILD_WEB_COMMIT=e3581b4f476062fcfa99c599ca9458a63b2639a1
 
       - name: "Release: Call Dispatcher"
         id: release-dispatcher
