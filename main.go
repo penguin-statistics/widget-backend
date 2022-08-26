@@ -1,7 +1,7 @@
 package main
 
 import (
-	"io/ioutil"
+	"embed"
 	"net/http"
 	"path"
 	"time"
@@ -19,6 +19,9 @@ import (
 	"github.com/penguin-statistics/widget-backend/response"
 	"github.com/penguin-statistics/widget-backend/utils"
 )
+
+//go:embed misc/teapot
+var teapot embed.FS
 
 var l = utils.NewLogger("main")
 
@@ -157,7 +160,7 @@ func main() {
 
 	// very important to implement. without this the server won't behave normally. (of course not) :D
 	e.Any("/_teapot", func(c echo.Context) error {
-		b, err := ioutil.ReadFile("misc/teapot")
+		b, err := teapot.ReadFile("misc/teapot")
 		if err != nil {
 			return c.JSON(render.JSONError(errors.New("TeapotNotFound", "cannot get teapot due to server failure :(", errors.BlameServer)))
 		}
