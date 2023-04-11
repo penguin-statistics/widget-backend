@@ -1,8 +1,11 @@
 package matrix
 
 import (
-	"github.com/penguin-statistics/widget-backend/utils"
+	"time"
+
 	"github.com/sirupsen/logrus"
+
+	"github.com/penguin-statistics/widget-backend/utils"
 )
 
 // Controller consists instance for a type of data. Matrix controller consists a slice of utils.Cache which contains data from multiple server
@@ -17,8 +20,13 @@ type Matrix struct {
 	ItemID   string `json:"itemId,omitempty"`
 	Quantity int    `json:"quantity"` // cannot omitempty as it is zeroable
 	Times    int    `json:"times"`    // cannot omitempty as it is zeroable
-	Start    *int64   `json:"start,omitempty"`
-	End      *int64   `json:"end,omitempty"`
+	Start    int64  `json:"start,omitempty"`
+	End      *int64 `json:"end,omitempty"`
+}
+
+func (m Matrix) IsCurrentDropping() bool {
+	now := time.Now().UnixMilli()
+	return m.Start <= now && (m.End == nil || *m.End >= now)
 }
 
 // Query describes a query on Matrix

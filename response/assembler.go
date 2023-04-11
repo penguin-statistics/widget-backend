@@ -79,6 +79,15 @@ func (m *Assembler) MarshalMatrix(records []*matrix.Matrix, query *matrix.Query)
 	return response
 }
 
+func filterCurrentDropping(matrix []*matrix.Matrix) (results []*matrix.Matrix) {
+	for _, entry := range matrix {
+		if entry.IsCurrentDropping() {
+			results = append(results, entry)
+		}
+	}
+	return results
+}
+
 // MarshalSiteStats marshals records with their dependencies and gives MatrixResponse that contains rich metadata for current state of controllers
 func (m *Assembler) MarshalSiteStats(records []siteStats.StageTime, query *siteStats.Query) *SiteStatsResponse {
 	stats := []*siteStats.SiteStat{}
@@ -92,6 +101,10 @@ func (m *Assembler) MarshalSiteStats(records []siteStats.StageTime, query *siteS
 			logger.Warnln("failed to query matrix for stage", "stage", record.StageID, "error", err)
 			continue
 		}
+
+		// filter out non-current-dropping items
+		matrices = filterCurrentDropping(matrices)
+
 		sort.SliceStable(matrices, func(i, j int) bool {
 			return (float64(matrices[i].Quantity) / float64(matrices[i].Times)) > (float64(matrices[j].Quantity) / float64(matrices[j].Times))
 		})

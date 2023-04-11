@@ -22,5 +22,10 @@ func NewPenguinRequest(resource string, params *url.Values) (*http.Request, erro
 	}
 	rel.RawQuery = params.Encode()
 
-	return http.NewRequest("GET", rel.String(), nil)
+	r, err := http.NewRequest("GET", rel.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+	r.Header.Set("User-Agent", "PenguinStatsWidgetBackend/1.0")
+	return r, nil
 }

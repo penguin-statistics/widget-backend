@@ -75,14 +75,14 @@ func (c *Cache) Update() error {
 		return err
 	}
 
-	c.mutex.RLock()
+	c.mutex.Lock()
 
 	now := time.Now()
 	c.Updated = &now
 	c.content = data
 	c.FailCount = 0
 
-	c.mutex.RUnlock()
+	c.mutex.Unlock()
 
 	c.Logger.Infoln("successfully updated instance with new data")
 
@@ -121,9 +121,9 @@ func NewCache(config CacheConfig) *Cache {
 		if err != nil {
 			instance.Logger.Errorln("error occurred when trying to fetch new data", err)
 
-			instance.mutex.RLock()
+			instance.mutex.Lock()
 			instance.FailCount++
-			instance.mutex.RUnlock()
+			instance.mutex.Unlock()
 		}
 	}
 
@@ -144,7 +144,7 @@ func NewCache(config CacheConfig) *Cache {
 
 // Content retrieves the cache content with proper mutex handling
 func (c *Cache) Content() interface{} {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
 	return c.content
 }
