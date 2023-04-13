@@ -30,7 +30,7 @@ jobs:
           repository: 'penguin-statistics/widget-backend'
           build-args: |
             BUILD_DOCS_COMMIT=fb08b08f5f97e89b2407e56c20b0707f19dc8f32
-            BUILD_WEB_COMMIT=3e47a0079c9c2d88ee57016814b2c8fb0bd66ede
+            BUILD_WEB_COMMIT=d8bfdda68fde8af99b2c062a83fda7a43cf4d880
 
       - name: "Release: Call Dispatcher"
         id: release-dispatcher
