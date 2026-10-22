@@ -33,8 +33,10 @@ WORKDIR /app
 
 # builder
 FROM base AS gobuilder
-ENV GOOS linux
-ENV GOARCH amd64
+ENV GOOS=linux
+ENV GOARCH=amd64
+# static binary: the runtime stage is plain alpine without a Go toolchain or libc6-compat
+ENV CGO_ENABLED=0
 
 # modules: utilize build cache
 COPY go.mod ./
@@ -47,11 +49,14 @@ COPY . .
 # build the binary
 RUN go build -o widgetbackend .
 
-# runner
-FROM base AS runner
-RUN apk add --no-cache libc6-compat
+# runner: plain alpine, only the binary, its config and the static assets.
+# misc/teapot is embedded into the binary (go:embed); upstream calls go to
+# https://penguin-stats.io, so CA certificates are required. No time zone
+# data is needed (all times are logged/handled in UTC).
+FROM alpine:3.24 AS runner
+WORKDIR /app
 
-RUN apk add --no-cache tini
+RUN apk add --no-cache ca-certificates tini
 # Tini is now available at /sbin/tini
 
 COPY --from=gobuilder /app/widgetbackend /app/widgetbackend

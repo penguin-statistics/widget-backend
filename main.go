@@ -44,6 +44,11 @@ func main() {
 			http.MethodOptions,
 		},
 		AllowCredentials: true,
+		// echo >= v4.10 answers AllowOrigins ["*"] + AllowCredentials with a
+		// literal "*" (which browsers reject for credentialed requests) unless
+		// this is set. Keep the long-standing behavior of reflecting the
+		// request Origin.
+		UnsafeWildcardOriginWithAllowCredentials: true,
 		ExposeHeaders: []string{
 			"Last-Modified",
 		},
