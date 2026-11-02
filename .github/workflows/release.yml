@@ -39,5 +39,5 @@ jobs:
           version: ${{ steps.git-meta.outputs.version }}
           use-ghrelease: true
           use-manifestbot: true
-          manifestbot-file-path: 'applications/widget/values-prod.yaml'
+          manifestbot-env-key: 'WIDGET_TAG'
           manifestbot-token: ${{ secrets.PAT_FOR_MANIFESTBOT }}
